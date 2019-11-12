@@ -10,19 +10,87 @@
       html {
         padding: 5%;
       }
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        text-align: center;
+      }
+      div {
+        padding-top: 2%;
+        font-size: 110%;
+      }
+      b {
+        color: #5cdaeb;
+      }
+      p {
+        font-size: 85%;
+        color: #ffffff;
+      }
+
+      #main {
+        font-size: 175%;
+      }
+      #facts {
+        padding-left: 13%;
+        padding-right: 13%;
+      }
+      #actual-facts {
+        font-size: 100%;
+      }
     </style>
   </head>
   <body>
+    <div id="main">
+      <b>Daily Cat Facts is a free API containing trivia about cats.</b>
+    </div>
+    <div id="options">
+      <b>Options:</b>
+      <p>I did not utilize any particular options in my API call.</p>
+    </div>
+    <div>
+      <b>Source:</b>
+      <p>https://apilist.fun/api/cat-facts</p>
+    </div>
+    <div id="applications">
+      <b>Potential Applications:</b>
+      <p>
+        A Joepardy game app where one of the categories that the player can
+        choose is cats. Cat facts could be reformatted in question style.
+      </p>
+      <p>
+        An app that simply provides a new cat fact each day. For cat
+        enthusiasts!
+      </p>
+    </div>
+    <div id="facts">
+      <b>Example Facts:</b>
+      <div id="actual-facts"></div>
+    </div>
     <script>
-      function httpGet(url) {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", url, false); // false for synchronous request
-        xmlHttp.send(null);
-        return xmlHttp.responseText;
-      }
-      alert("about to get");
-      alert(httpGet("https://cat-fact.herokuapp.com/facts"));
-      alert("finished");
+      var ajaxRequest = new XMLHttpRequest();
+      ajaxRequest.onreadystatechange = function() {
+        if (ajaxRequest.readyState == 4) {
+          if (ajaxRequest.status == 200) {
+            var obj = JSON.parse(ajaxRequest.responseText);
+            var all_facts = obj["all"];
+            all_facts.forEach(function(fact) {
+              var p = document.createElement("p");
+              var text = document.createTextNode(fact["text"]);
+              p.appendChild(text);
+              document.getElementById("actual-facts").appendChild(p);
+            });
+          } else {
+            console.log("Status error: " + ajaxRequest.status);
+          }
+        } else {
+          console.log("Ignored readyState: " + ajaxRequest.readyState);
+        }
+      };
+      ajaxRequest.open(
+        "GET",
+        "https://cors-anywhere.herokuapp.com/https://cat-fact.herokuapp.com/facts"
+      );
+      ajaxRequest.send();
     </script>
   </body>
 </html>
